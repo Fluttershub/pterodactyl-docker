@@ -7,8 +7,9 @@ RUN \
     && cd / \ 
     && git clone https://github.com/pterodactyl/wings --depth 1 --branch ${VERSION} \
     && cd wings \
+    && BuildVersion=$(echo "$VERSION" | sed 's/v//') \
     && CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build \
-        -ldflags="-s -w -X github.com/pterodactyl/wings/system.Version=$VERSION" \
+        -ldflags="-s -w -X github.com/pterodactyl/wings/system.Version=$BuildVersion" \
         -v \
         -trimpath \
         -o wings \
