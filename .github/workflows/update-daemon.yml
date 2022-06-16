@@ -3,7 +3,8 @@ name: Update Wings Image
 on:
   workflow_dispatch:
 env:
-    DAEMON_PROJECT_NAME: pterodactyl-wings-daemon
+    DAEMON_PROJECT_NAME: pterodactyl-wings
+    DAEMON_PROJECT_NAME_ARM64: pterodactyl-wings-arm64
 jobs:
   build_push_wings_x64:
     name: Build x64 Wings
@@ -76,14 +77,14 @@ jobs:
         push: true
         build-args: VERSION=${{ steps.read_version.outputs.version }}
         tags: |
-          "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DAEMON_PROJECT_NAME }}:arm64-latest"
-          "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DAEMON_PROJECT_NAME }}:arm64-${{ steps.read_version.outputs.version }}"
+          "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DAEMON_PROJECT_NAME_ARM64 }}:latest"
+          "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DAEMON_PROJECT_NAME_ARM64 }}:${{ steps.read_version.outputs.version }}"
 
     - uses: sarisia/actions-status-discord@v1
       with:
         webhook: ${{ secrets.DISCORD_WEBHOOK }}
         nodetail: true
-        title: New build of `${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DAEMON_PROJECT_NAME }}` is out!
+        title: New build of `${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DAEMON_PROJECT_NAME_ARM64 }}` is out!
         description: |
           Version `arm64-${{ steps.read_version.outputs.version }}`
           https://github.com/pterodactyl/wings/releases/tag/${{ steps.read_version.outputs.version }}
