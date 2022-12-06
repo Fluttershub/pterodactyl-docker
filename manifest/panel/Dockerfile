@@ -19,7 +19,7 @@ RUN apk --update-cache add ca-certificates && \
     php8-fpm@php php8-gd@php php8-mbstring@php php8-openssl@php php8-pdo@php php8-phar@php php8-json@php php8-sodium@php php8-xmlwriter@php \
     php8-pdo_mysql@php php8-session@php php8-curl@php php8-simplexml@php php8-xml@php php8-tokenizer@php php8-ctype@php php8-zlib@php php8-zip@php tini \
     && mkdir -p /var/www/html /run/nginx /etc/nginx/conf.d/ && \
-    ln -s /usr/bin/php81 /usr/bin/php
+    ln -s /usr/bin/php8 /usr/bin/php
  
 RUN \
  curl -Lo panel.tar.gz https://github.com/pterodactyl/panel/releases/download/${PANEL_VERSION}/panel.tar.gz \
