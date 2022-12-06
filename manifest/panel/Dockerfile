@@ -26,7 +26,7 @@ RUN \
  && rm panel.tar.gz \
  && chmod -R 755 storage/* bootstrap/cache \
  && find storage -type d > .storage.tmpl \
- && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+ && curl -sS https://getcomposer.org/installer | php8 -- --install-dir=/usr/local/bin --filename=composer \
  && cp .env.example .env \
  && composer install --ansi --no-dev --optimize-autoloader \
  && rm .env ./storage -rf \
