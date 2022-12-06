@@ -9,7 +9,9 @@ ENV STARTUP_TIMEOUT=5 \
 
 WORKDIR /var/www/html
 
-RUN  apk --update-cache add ca-certificates && \
+ADD https://php.hernandev.com/key/php-alpine.rsa.pub /etc/apk/keys/php-alpine.rsa.pub
+
+RUN apk --update-cache add ca-certificates && \
     echo "https://php.hernandev.com/v3.15/php-8.1" >> /etc/apk/repositories && \
     apk --update add curl gettext nginx php php php-bcmath php-common php-dom php-fileinfo \
     php-fpm php-gd php-memcached php-mbstring php-openssl php-pdo php-phar php-json php-sodium php-xmlwriter \
