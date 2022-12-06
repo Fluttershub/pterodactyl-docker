@@ -12,10 +12,11 @@ WORKDIR /var/www/html
 ADD https://php.hernandev.com/key/php-alpine.rsa.pub /etc/apk/keys/php-alpine.rsa.pub
 
 RUN apk --update-cache add ca-certificates && \
-    echo "https://php.hernandev.com/v3.15/php-8.1" >> /etc/apk/repositories && \
-    apk --update add curl gettext nginx php php php-bcmath php-common php-dom php-fileinfo \
-    php-fpm php-gd php-memcached php-mbstring php-openssl php-pdo php-phar php-json php-sodium php-xmlwriter \
-    php-pdo_mysql php-session php-curl php-simplexml php-xml php-tokenizer php-ctype php-zlib php-zip tini \
+    echo "@php https://php.hernandev.com/v3.15/php-8.1" >> /etc/apk/repositories && \
+    apk add --update php-common@php && \
+    apk --update add curl gettext nginx php php-bcmath@php php-common@php php-dom@php php-fileinfo@php \
+    php-fpm@php php-gd@php php-memcached@php php-mbstring@php php-openssl@php php-pdo@php php-phar@php php-json@php php-sodium@php php-xmlwriter@php \
+    php-pdo_mysql@php php-session@php php-curl@php php-simplexml@php php-xml@php php-tokenizer@php php-ctype@php php-zlib@php php-zip@php tini \
     && mkdir -p /var/www/html /run/nginx /etc/nginx/conf.d/
  
 RUN \
