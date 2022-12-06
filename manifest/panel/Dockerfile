@@ -18,7 +18,8 @@ RUN apk --update-cache add ca-certificates && \
     apk --update add curl gettext nginx php8@php php8-bcmath@php php8-common@php php8-dom@php php8-fileinfo@php \
     php8-fpm@php php8-gd@php php8-mbstring@php php8-openssl@php php8-pdo@php php8-phar@php php8-json@php php8-sodium@php php8-xmlwriter@php \
     php8-pdo_mysql@php php8-session@php php8-curl@php php8-simplexml@php php8-xml@php php8-tokenizer@php php8-ctype@php php8-zlib@php php8-zip@php tini \
-    && mkdir -p /var/www/html /run/nginx /etc/nginx/conf.d/
+    && mkdir -p /var/www/html /run/nginx /etc/nginx/conf.d/ && \
+    ln -s /usr/bin/php81 /usr/bin/php
  
 RUN \
  curl -Lo panel.tar.gz https://github.com/pterodactyl/panel/releases/download/${PANEL_VERSION}/panel.tar.gz \
@@ -26,7 +27,7 @@ RUN \
  && rm panel.tar.gz \
  && chmod -R 755 storage/* bootstrap/cache \
  && find storage -type d > .storage.tmpl \
- && curl -sS https://getcomposer.org/installer | php8 -- --install-dir=/usr/local/bin --filename=composer \
+ && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
  && cp .env.example .env \
  && composer install --ansi --no-dev --optimize-autoloader \
  && rm .env ./storage -rf \
