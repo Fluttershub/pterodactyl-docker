@@ -11,7 +11,7 @@ WORKDIR /var/www/html
 
 ENV CURRENT_PHP_VERSION=8.1.0
 
-ADD https://php.hernandev.com/key/php8-alpine.rsa.pub /etc/apk/keys/php8-alpine.rsa.pub
+ADD https://php.hernandev.com/key/php-alpine.rsa.pub /etc/apk/keys/php-alpine.rsa.pub
 
 RUN apk --update-cache add ca-certificates && \
     echo "@php https://php.hernandev.com/v3.13/php8-8.1" >> /etc/apk/repositories && \
