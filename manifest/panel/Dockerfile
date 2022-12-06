@@ -14,7 +14,7 @@ ENV CURRENT_PHP_VERSION=8.1.0
 ADD https://php.hernandev.com/key/php-alpine.rsa.pub /etc/apk/keys/php-alpine.rsa.pub
 
 RUN apk --update-cache add ca-certificates && \
-    echo "@php https://php.hernandev.com/v3.13/php8-8.1" >> /etc/apk/repositories && \
+    echo "@php https://php.hernandev.com/v3.13/php-8.1" >> /etc/apk/repositories && \
     apk --update add curl gettext nginx php8@php php8-bcmath@php php8-common@php php8-dom@php php8-fileinfo@php \
     php8-fpm@php php8-gd@php php8-memcached@php php8-mbstring@php php8-openssl@php php8-pdo@php php8-phar@php php8-json@php php8-sodium@php php8-xmlwriter@php \
     php8-pdo_mysql@php php8-session@php php8-curl@php php8-simplexml@php php8-xml@php php8-tokenizer@php php8-ctype@php php8-zlib@php php8-zip@php tini \
