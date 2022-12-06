@@ -9,11 +9,12 @@ ENV STARTUP_TIMEOUT=5 \
 
 WORKDIR /var/www/html
 
-RUN \
- apk --update add curl gettext nginx php php php-bcmath php-common php-dom php-fileinfo \
- php-fpm php-gd php-memcached php-mbstring php-openssl php-pdo php-phar php-json php-sodium php-xmlwriter \
- php-pdo_mysql php-session php-curl php-simplexml php-xml php-tokenizer php-ctype php-zlib php-zip tini \
- && mkdir -p /var/www/html /run/nginx /etc/nginx/conf.d/
+RUN  apk --update-cache add ca-certificates && \
+    echo "https://php.hernandev.com/v3.15/php-8.1" >> /etc/apk/repositories && \
+    apk --update add curl gettext nginx php php php-bcmath php-common php-dom php-fileinfo \
+    php-fpm php-gd php-memcached php-mbstring php-openssl php-pdo php-phar php-json php-sodium php-xmlwriter \
+    php-pdo_mysql php-session php-curl php-simplexml php-xml php-tokenizer php-ctype php-zlib php-zip tini \
+    && mkdir -p /var/www/html /run/nginx /etc/nginx/conf.d/
  
 RUN \
  curl -Lo panel.tar.gz https://github.com/pterodactyl/panel/releases/download/${PANEL_VERSION}/panel.tar.gz \
