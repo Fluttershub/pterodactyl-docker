@@ -9,7 +9,7 @@ ENV STARTUP_TIMEOUT=5 \
 
 WORKDIR /var/www/html
 
-RUN apk del php7*
+RUN apk del php7-common-7.4.33-r0
 
 ADD https://php.hernandev.com/key/php-alpine.rsa.pub /etc/apk/keys/php-alpine.rsa.pub
 
