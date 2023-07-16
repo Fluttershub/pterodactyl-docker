@@ -1,6 +1,6 @@
 FROM alpine:3.16 
 
-LABEL maintainer="MrFlutters"
+LABEL maintainer="hotarublaze <https://github.com/HotaruBlaze>"
 
 ARG VERSION
 
