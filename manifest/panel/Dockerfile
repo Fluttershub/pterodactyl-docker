@@ -1,4 +1,4 @@
-FROM alpine:3.16 
+FROM alpine:3.18
 
 LABEL maintainer="hotarublaze <https://github.com/HotaruBlaze>"
 
@@ -9,9 +9,11 @@ ENV STARTUP_TIMEOUT=5 \
 
 WORKDIR /var/www/html
 
-RUN apk --update add curl gettext nginx php8 php8-bcmath php8-common php8-dom php8-fileinfo php8-posix \
-    php8-fpm php8-gd php8-mbstring php8-openssl php8-pdo php8-phar php8-json php8-sodium php8-xmlwriter \
-    php8-pdo_mysql php8-session php8-curl php8-simplexml php8-xml php8-tokenizer php8-ctype php8-zlib php8-zip tini \
+RUN echo http://dl-cdn.alpinelinux.org/alpine/v3.18/community/ >> /etc/apk/repositories
+
+RUN apk --update add curl gettext nginx php81 php81-bcmath php81-common php81-dom php81-fileinfo php81-posix \
+    php81-fpm php81-gd php81-mbstring php81-openssl php81-pdo php81-phar php81-json php81-sodium php81-xmlwriter \
+    php81-pdo_mysql php81-session php81-curl php81-simplexml php81-xml php81-tokenizer php81-ctype php81-zlib php81-zip tini \
     && mkdir -p /var/www/html /run/nginx /etc/nginx/conf.d/
  
 RUN \
@@ -34,6 +36,10 @@ RUN rm /var/www/html/database/migrations/2020_10_10_165437_change_unique_databas
 RUN \
     ln -s /data/storage storage; \
     ln -s /data/pterodactyl.conf .env;
+
+RUN \
+    dos2unix /entrypoint.sh; \
+    dos2unix /usr/local/bin/wait-for;
 
 VOLUME [ "/data" ]
 
