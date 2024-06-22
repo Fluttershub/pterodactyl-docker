@@ -104,10 +104,11 @@ initContainer
 
 case "${1}" in
     p:start)
+        /listen.sh &
         startServer
         ;;
     p:worker)
-        exec php /var/www/html/artisan queue:work --queue=high,standard,low --sleep=3 --tries=3
+        exec php /app/artisan queue:work --queue=high,standard,low --sleep=3 --tries=3
         ;;
     p:cron)
         exec /usr/sbin/crond -f -l 0

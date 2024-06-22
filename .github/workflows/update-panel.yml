@@ -26,7 +26,7 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build and push
+    - name: Build and push - Base Pterodactyl
       uses: docker/build-push-action@v2
       with:
         context: ./manifest/panel
@@ -37,7 +37,19 @@ jobs:
         tags: |
           "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.PANEL_PROJECT_NAME }}:latest"
           "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.PANEL_PROJECT_NAME }}:${{ steps.read_version.outputs.version }}"
-          
+
+    - name: Build and push - Pterodactyl + Blueprints
+      uses: docker/build-push-action@v2
+      with:
+        context: ./manifest/panel
+        file: ./manifest/panel/Blueprint-Dockerfile
+        platforms: linux/amd64
+        build-args: VERSION=${{ steps.read_version.outputs.version }}
+        push: true
+        tags: |
+          "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.PANEL_PROJECT_NAME }}:latest-Blueprint"
+          "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.PANEL_PROJECT_NAME }}:${{ steps.read_version.outputs.version }}-Blueprint"
+
     - uses: sarisia/actions-status-discord@v1
       with:
         webhook: ${{ secrets.DISCORD_WEBHOOK }}
