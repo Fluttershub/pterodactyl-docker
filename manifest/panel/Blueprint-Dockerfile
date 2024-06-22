@@ -88,7 +88,7 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | b
     && yarn
 
 RUN wget $(curl -s https://api.github.com/repos/BlueprintFramework/framework/releases/latest | grep 'browser_download_url' | cut -d '"' -f 4) -O blueprint.zip
-RUN unzip -o blueprint.zip -d /app
+RUN unzip -o blueprint.zip -d /app || true
 RUN rm blueprint.zip
 
 ENV TERM=xterm
