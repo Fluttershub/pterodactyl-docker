@@ -2,10 +2,58 @@ name: Update Wings Image
 
 on:
   workflow_dispatch:
+
 env:
-    DAEMON_PROJECT_NAME: pterodactyl-wings
-    DAEMON_PROJECT_NAME_ARM64: pterodactyl-wings-arm64
+  DAEMON_PROJECT_NAME: pterodactyl-wings
+  DAEMON_PROJECT_NAME_X64_KVM: pterodactyl-wings-x64-kvm
+  DAEMON_PROJECT_NAME_X64: pterodactyl-wings-x64
+  DAEMON_PROJECT_NAME_ARM64: pterodactyl-wings-arm64
+
 jobs:
+  build_push_wings_x64_kvm:
+    name: Build x64 Wings with KVM
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup repo
+      uses: actions/checkout@v2
+
+    - name: Read Version
+      id: read_version
+      run: |
+        echo "::set-output name=version::$(grep -Po "DAEMON_VERSION=\K[^ ]+" ./manifest/version.txt)"
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build and Push
+      uses: docker/build-push-action@v2
+      with:
+        context: ./manifest/wings_x64
+        file: ./manifest/wings_x64/Dockerfile
+        platforms: linux/amd64
+        push: true
+        build-args: |
+          VERSION=${{ steps.read_version.outputs.version }}
+          WITH_KVM=true
+        tags: |
+          "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DAEMON_PROJECT_NAME_X64_KVM }}:latest"
+          "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DAEMON_PROJECT_NAME_X64_KVM }}:${{ steps.read_version.outputs.version }}"
+
+    - uses: sarisia/actions-status-discord@v1
+      with:
+        webhook: ${{ secrets.DISCORD_WEBHOOK }}
+        nodetail: true
+        title: New build of `${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DAEMON_PROJECT_NAME_X64_KVM }}` is out!
+        description: |
+          Version `${{ steps.read_version.outputs.version }}`
+          https://github.com/pterodactyl/wings/releases/tag/${{ steps.read_version.outputs.version }}
+
   build_push_wings_x64:
     name: Build x64 Wings
     runs-on: ubuntu-latest
@@ -34,16 +82,18 @@ jobs:
         file: ./manifest/wings_x64/Dockerfile
         platforms: linux/amd64
         push: true
-        build-args: VERSION=${{ steps.read_version.outputs.version }}
+        build-args: |
+          VERSION=${{ steps.read_version.outputs.version }}
+          WITH_KVM=false
         tags: |
-          "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DAEMON_PROJECT_NAME }}:latest"
-          "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DAEMON_PROJECT_NAME }}:${{ steps.read_version.outputs.version }}"
+          "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DAEMON_PROJECT_NAME_X64 }}:latest"
+          "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DAEMON_PROJECT_NAME_X64 }}:${{ steps.read_version.outputs.version }}"
 
     - uses: sarisia/actions-status-discord@v1
       with:
         webhook: ${{ secrets.DISCORD_WEBHOOK }}
         nodetail: true
-        title: New build of `${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DAEMON_PROJECT_NAME }}` is out!
+        title: New build of `${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DAEMON_PROJECT_NAME_X64 }}` is out!
         description: |
           Version `${{ steps.read_version.outputs.version }}`
           https://github.com/pterodactyl/wings/releases/tag/${{ steps.read_version.outputs.version }}
@@ -74,8 +124,10 @@ jobs:
       with:
         context: ./manifest/wings_arm64
         file: ./manifest/wings_arm64/Dockerfile
+        platforms: linux/arm64
         push: true
-        build-args: VERSION=${{ steps.read_version.outputs.version }}
+        build-args: |
+          VERSION=${{ steps.read_version.outputs.version }}
         tags: |
           "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DAEMON_PROJECT_NAME_ARM64 }}:latest"
           "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DAEMON_PROJECT_NAME_ARM64 }}:${{ steps.read_version.outputs.version }}"
