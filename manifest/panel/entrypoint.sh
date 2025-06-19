@@ -77,7 +77,7 @@ function startServer {
     echo "--- Starting Pterodactyl Panel: ${VERSION} ---"
 
     # Run these as jobs and monitor their pid status
-    /usr/sbin/php-fpm81 --nodaemonize -c /etc/php83 & php_service_pid=$!
+    /usr/sbin/php-fpm83 --nodaemonize -c /etc/php83 & php_service_pid=$!
     /usr/sbin/nginx -g "daemon off;" & nginx_service_pid=$!
 
     # Monitor Child Processes
