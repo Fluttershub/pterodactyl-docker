@@ -1,4 +1,4 @@
-FROM alpine:3.18
+FROM alpine:3.22
 
 LABEL maintainer="hotarublaze <https://github.com/HotaruBlaze>"
 
@@ -11,11 +11,11 @@ WORKDIR /app
 
 RUN echo http://dl-cdn.alpinelinux.org/alpine/v3.18/community/ >> /etc/apk/repositories
 
-RUN apk --update add curl gettext nginx php81 php81-bcmath php81-common php81-dom php81-fileinfo php81-posix \
-    php81-fpm php81-gd php81-mbstring php81-openssl php81-pdo php81-phar php81-json php81-sodium php81-xmlwriter \
-    php81-pdo_mysql php81-session php81-curl php81-simplexml php81-xml php81-tokenizer php81-ctype php81-zlib php81-zip tini \
+RUN apk --update add curl gettext nginx php83 php83-bcmath php83-common php83-dom php83-fileinfo php83-posix \
+    php83-fpm php83-gd php83-mbstring php83-openssl php83-pdo php83-phar php83-json php83-sodium php83-xmlwriter \
+    php83-pdo_mysql php83-session php83-curl php83-simplexml php83-xml php83-tokenizer php83-ctype php83-zlib php83-zip tini \
     && mkdir -p /app /run/nginx /etc/nginx/conf.d/
- 
+
 RUN \
  curl -Lo panel.tar.gz https://github.com/pterodactyl/panel/releases/download/${PANEL_VERSION}/panel.tar.gz \
  && tar -xzvf panel.tar.gz \
