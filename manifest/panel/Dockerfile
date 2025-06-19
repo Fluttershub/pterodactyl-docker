@@ -9,7 +9,7 @@ ENV STARTUP_TIMEOUT=5 \
 
 WORKDIR /app
 
-RUN echo http://dl-cdn.alpinelinux.org/alpine/v3.18/community/ >> /etc/apk/repositories
+RUN echo http://dl-cdn.alpinelinux.org/alpine/v3.22/community/ >> /etc/apk/repositories
 
 RUN apk --update add curl gettext nginx php83 php83-bcmath php83-common php83-dom php83-fileinfo php83-posix \
     php83-fpm php83-gd php83-mbstring php83-openssl php83-pdo php83-phar php83-json php83-sodium php83-xmlwriter \
