@@ -11,9 +11,15 @@ WORKDIR /app
 
 RUN echo http://dl-cdn.alpinelinux.org/alpine/v3.22/community/ >> /etc/apk/repositories
 
-RUN apk --update add curl gettext nginx php83 php83-bcmath php83-common php83-dom php83-fileinfo php83-posix \
-    php83-fpm php83-gd php83-mbstring php83-openssl php83-pdo php83-phar php83-json php83-sodium php83-xmlwriter \
-    php83-pdo_mysql php83-session php83-curl php83-simplexml php83-xml php83-tokenizer php83-ctype php83-zlib php83-zip tini \
+RUN apk --update add \
+    curl gettext nginx tini \
+    php83 php83-common php83-fpm \
+    php83-bcmath php83-ctype php83-curl php83-dom php83-fileinfo \
+    php83-gd php83-iconv php83-json php83-mbstring php83-openssl \
+    php83-pdo php83-pdo_mysql php83-phar php83-posix php83-session \
+    php83-simplexml php83-sodium php83-tokenizer php83-xml php83-xmlwriter \
+    php83-zlib php83-zip \
+    gnu-libiconv \
     && mkdir -p /app /run/nginx /etc/nginx/conf.d/
 
 RUN \
