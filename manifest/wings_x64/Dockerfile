@@ -1,5 +1,5 @@
 # Base build stage
-FROM golang:1.21-alpine as build
+FROM golang:1.24-alpine AS build
 
 ARG VERSION
 ARG WITH_KVM=false
