@@ -5,7 +5,7 @@ on:
   - cron: "0 0 * * *"
 env:
   PANEL_PROJECT_NAME: pterodactyl-panel # Dockerhub project
-  DAEMON_PROJECT_NAME: pterodactyl-wings
+  DAEMON_PROJECT_NAME: pterodactyl-wings-x64
 jobs:
   get_versions:
     name: Get Versions
@@ -39,25 +39,75 @@ jobs:
     name: Update version.txt
     runs-on: ubuntu-latest
     needs: get_versions
-    if: needs.get_versions.outputs.latest_panel_version != needs.get_versions.outputs.current_panel_version || needs.get_versions.outputs.latest_daemon_version != needs.get_versions.outputs.current_daemon_version
+    outputs:
+      versions_changed: ${{ steps.check_versions.outputs.versions_changed }}
     steps:
     - uses: actions/checkout@v2
-    - run: |
+
+    - name: Check if versions changed
+      id: check_versions
+      run: |
+        echo "Checking if versions have changed..."
+        current_panel="${{ needs.get_versions.outputs.current_panel_version }}"
+        current_daemon="${{ needs.get_versions.outputs.current_daemon_version }}"
+        latest_panel="${{ needs.get_versions.outputs.latest_panel_version }}"
+        latest_daemon="${{ needs.get_versions.outputs.latest_daemon_version }}"
+
+        # Set defaults if empty
+        current_panel=${current_panel:-"unknown"}
+        current_daemon=${current_daemon:-"unknown"}
+        latest_panel=${latest_panel:-"unknown"}
+        latest_daemon=${latest_daemon:-"unknown"}
+
+        echo "Current Panel: $current_panel -> Latest: $latest_panel"
+        echo "Current Daemon: $current_daemon -> Latest: $latest_daemon"
+
+        if [ "$current_panel" == "$latest_panel" ] && [ "$current_daemon" == "$latest_daemon" ]; then
+          echo "versions_changed=false" >> "$GITHUB_OUTPUT"
+          echo "No version changes detected - skipping update"
+        else
+          echo "versions_changed=true" >> "$GITHUB_OUTPUT"
+          echo "Version changes detected - proceeding with update"
+        fi
+
+    - name: Update version.txt
+      if: steps.check_versions.outputs.versions_changed == 'true'
+      run: |
+        echo "Updating version.txt..."
+
+        # Write new version info
+        echo "PANEL_VERSION=${{ needs.get_versions.outputs.latest_panel_version }}" > ./manifest/version.txt
+        echo "DAEMON_VERSION=${{ needs.get_versions.outputs.latest_daemon_version }}" >> ./manifest/version.txt
+
+    - name: Commit and push changes
+      if: steps.check_versions.outputs.versions_changed == 'true'
+      run: |
+        echo "Setting up git..."
+
+        # Configure git
         git config user.name github-actions
         git config user.email github-actions@github.com
-        echo -e "PANEL_VERSION=${{ needs.get_versions.outputs.latest_panel_version }}\nDAEMON_VERSION=${{ needs.get_versions.outputs.latest_daemon_version }}" > ./manifest/version.txt
-        git commit -a -m "updated version.txt."
-        git push
-  
+
+        # Fetch to ensure we're up to date
+        git fetch origin master
+
+        # Stage the file
+        git add ./manifest/version.txt
+
+        # Create commit (allow empty in case file didn't actually change)
+        git commit -m "Update version.txt to v${{ needs.get_versions.outputs.latest_panel_version }}-v${{ needs.get_versions.outputs.latest_daemon_version }}" --allow-empty
+
+        # Push changes
+        git push origin master
+
   request_panel_build:
     name: Request Panel Build
-    if: needs.get_versions.outputs.current_panel_version != needs.get_versions.outputs.latest_panel_version
     runs-on: ubuntu-latest
-    needs:
-    - get_versions
-    - update-version-txt
+    needs: update-version-txt
+    if: needs.update-version-txt.outputs.versions_changed == 'true'
     steps:
-    - uses: convictional/trigger-workflow-and-wait@v1.3.0
+    - name: Trigger Panel Build
+      uses: convictional/trigger-workflow-and-wait@v1.6.5
       with:
         owner: ${{ github.repository_owner }}
         repo: pterodactyl-docker
@@ -66,16 +116,15 @@ jobs:
         ref: master
         trigger_workflow: true
         wait_workflow: false
-        
+
   request_daemon_build:
     name: Request Daemon Build
     runs-on: ubuntu-latest
-    if: needs.get_versions.outputs.current_daemon_version != needs.get_versions.outputs.latest_daemon_version
-    needs:
-    - get_versions
-    - update-version-txt
+    needs: update-version-txt
+    if: needs.update-version-txt.outputs.versions_changed == 'true'
     steps:
-    - uses: convictional/trigger-workflow-and-wait@v1.3.0
+    - name: Trigger Daemon Build
+      uses: convictional/trigger-workflow-and-wait@v1.6.5
       with:
         owner: ${{ github.repository_owner }}
         repo: pterodactyl-docker
