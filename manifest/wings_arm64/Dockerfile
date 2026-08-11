@@ -1,4 +1,4 @@
-FROM golang:1.21-alpine as build
+FROM golang:1.21-alpine AS build
 
 ARG VERSION
 
@@ -15,7 +15,7 @@ RUN \
         -o wings \
         wings.go
 
-FROM alpine:latest as final
+FROM alpine:latest AS final
 LABEL maintainer="Phoenix"
 
 RUN \
@@ -32,7 +32,7 @@ EXPOSE 2022
 
 RUN addgroup -g 3000 pterodactyl \
     && adduser \
-    --disabled-password \
+    --disabled-pASsword \
     --gecos "" \
     --ingroup "pterodactyl" \
     --no-create-home \
