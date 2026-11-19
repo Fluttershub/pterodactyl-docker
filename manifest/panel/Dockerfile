@@ -12,7 +12,7 @@ WORKDIR /app
 RUN echo http://dl-cdn.alpinelinux.org/alpine/v3.22/community/ >> /etc/apk/repositories
 
 RUN apk --update add \
-    curl gettext nginx tini \
+    curl gettext 'nginx>=1.28.3-r8' tini \
     php83 php83-common php83-fpm \
     php83-bcmath php83-ctype php83-curl php83-dom php83-fileinfo \
     php83-gd php83-iconv php83-json php83-mbstring php83-openssl \
