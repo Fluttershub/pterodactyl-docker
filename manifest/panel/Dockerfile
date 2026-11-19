@@ -1,4 +1,4 @@
-FROM alpine:3.22
+FROM php:8.3.37-fpm-alpine3.24
 
 LABEL maintainer="hotarublaze <https://github.com/HotaruBlaze>"
 
@@ -9,18 +9,17 @@ ENV STARTUP_TIMEOUT=5 \
 
 WORKDIR /app
 
-RUN echo http://dl-cdn.alpinelinux.org/alpine/v3.22/community/ >> /etc/apk/repositories
-
-RUN apk --update add \
-    curl gettext 'nginx>=1.28.3-r8' tini \
-    php83 php83-common php83-fpm \
-    php83-bcmath php83-ctype php83-curl php83-dom php83-fileinfo \
-    php83-gd php83-iconv php83-json php83-mbstring php83-openssl \
-    php83-pdo php83-pdo_mysql php83-phar php83-posix php83-session \
-    php83-simplexml php83-sodium php83-tokenizer php83-xml php83-xmlwriter \
-    php83-zlib php83-zip \
-    gnu-libiconv \
+RUN apk --update add --no-cache \
+    curl gettext dos2unix 'nginx>=1.30.7-r0' tini \
+    libjpeg-turbo libpng freetype libzip \
+    && apk add --no-cache --virtual .build-deps \
+        libjpeg-turbo-dev libpng-dev freetype-dev libzip-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j"$(nproc)" bcmath gd pdo_mysql zip \
+    && apk del .build-deps \
     && mkdir -p /app /run/nginx /etc/nginx/conf.d/
+
+RUN nginx -v && php -v
 
 RUN \
  curl -Lo panel.tar.gz https://github.com/pterodactyl/panel/releases/download/${PANEL_VERSION}/panel.tar.gz \
